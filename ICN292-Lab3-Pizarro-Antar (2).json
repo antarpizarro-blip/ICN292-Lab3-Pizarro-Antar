@@ -1,0 +1,63 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "90ead777-4063-4f5f-9535-410deb18081d",
+      "name": "When clicking ‘Execute workflow’",
+      "notesInFlow": true,
+      "notes": "Ejecutador"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://antarpp.app.n8n.cloud/webhook-test/ordenes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f05ea55e-d65d-4a20-844d-ed1e4ea5bcd6",
+      "name": "HTTP Request",
+      "notesInFlow": true,
+      "notes": "Enviar solicitud"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d762484d-1d74-4efb-b826-740fd022bdfc",
+  "meta": {
+    "instanceId": "1ebd01d71c3a2edd73556eaafc72a22df6124a129966fda575f5566971cd3866"
+  },
+  "nodeGroups": [],
+  "id": "sQaviRoDFE7aHbhs",
+  "tags": []
+}

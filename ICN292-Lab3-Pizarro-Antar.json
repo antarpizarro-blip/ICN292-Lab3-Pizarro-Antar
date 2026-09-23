@@ -1,0 +1,802 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ordenes",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -208,
+        32
+      ],
+      "id": "3146978c-a649-4622-a43b-c5889a7d54e5",
+      "name": "Webhook",
+      "webhookId": "e429e1f0-e7b7-4d6e-ab24-91d43ee506de",
+      "notesInFlow": true,
+      "notes": "Recibir orden"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.id_solicitud }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "empty",
+                      "singleValue": true
+                    },
+                    "id": "8cce119f-63f2-47d2-8d7f-265f6b36c8ce"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5540b100-e0ed-4d53-ba7b-51173aa72b13",
+                    "leftValue": "={{ $('Webhook').item.json.body.monto.toNumber() }}",
+                    "rightValue": "={{ 0 }}",
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3bb90bb3-50c4-4df9-9a14-8de97d7a7b61",
+                    "leftValue": "={{ $('Webhook').item.json.body.dias_desde_compra.toNumber() }}",
+                    "rightValue": 14,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "79608097-1250-478d-b373-a56f3a19fb06",
+                    "leftValue": "={{ $('Webhook').item.json.body.estado_producto }}",
+                    "rightValue": "danado_por_uso",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "97942d1c-3a65-445c-8c35-0c6856be414e",
+                    "leftValue": "={{ $('Webhook').item.json.body.monto.toNumber() }}",
+                    "rightValue": 61000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "968b195d-c94c-4bd2-a557-c18ad1f12fd1",
+                    "leftValue": "={{ $('Webhook').item.json.body.estado_producto }}",
+                    "rightValue": "con_fallas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        -48
+      ],
+      "id": "dd9db634-5916-4134-a18c-bb39fb0c8edb",
+      "name": "Switch",
+      "notesInFlow": true,
+      "notes": "Clasificar"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c596f0a1-a6b1-4eb3-8e0f-aff25eef6149",
+              "name": "ruta",
+              "value": "=DATOS_INVALIDOS",
+              "type": "string"
+            },
+            {
+              "id": "378539a9-2187-48c0-a22b-117405558263",
+              "name": "motivo",
+              "value": "=INVALIDO_CAMPO",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        -448
+      ],
+      "id": "2553d9c5-e8d3-4584-ba1c-7068ea13b64e",
+      "name": "Edit Fields1",
+      "notesInFlow": true,
+      "notes": "Validación identificación"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8cb4a6f9-ce58-4e41-bbaf-607589a2184a",
+              "name": "ruta",
+              "value": "DATOS_INVALIDOS",
+              "type": "string"
+            },
+            {
+              "id": "3267ba27-0ebf-47bc-a01e-7b46b81e50cb",
+              "name": "motivo",
+              "value": "INVALIDO_MONTO",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        -288
+      ],
+      "id": "6f2949cb-02fa-4fbe-a8d9-6c360188687f",
+      "name": "Edit Fields",
+      "notesInFlow": true,
+      "notes": "validación monto"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "83841f13-3a97-4bc1-a0ef-e7075b4193a2",
+              "name": "ruta",
+              "value": "RECHAZO",
+              "type": "string"
+            },
+            {
+              "id": "e78cf415-6bb9-4e2b-8a47-5bc93253e27d",
+              "name": "motivo",
+              "value": "RACHAZO_PLAZO",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        -128
+      ],
+      "id": "7bc0aba0-3d2d-448d-ab91-f1915377c953",
+      "name": "Edit Fields2",
+      "notesInFlow": true,
+      "notes": "Rechazo plazo"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ccdd0e17-84be-4f3f-a3a8-850673913d84",
+              "name": "ruta",
+              "value": "RECHAZO",
+              "type": "string"
+            },
+            {
+              "id": "642ce957-3034-4519-8cb3-92c9eb5fe9e9",
+              "name": "motivo",
+              "value": "RECHAZO_ESTADO",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        32
+      ],
+      "id": "e9285f13-00ef-4c9a-a70a-5ae150e1308d",
+      "name": "Edit Fields3",
+      "notesInFlow": true,
+      "notes": "rechazo estado"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9b33b39e-6d40-42f4-bd7f-0ea46b51fe25",
+              "name": "ruta",
+              "value": "REVISION",
+              "type": "string"
+            },
+            {
+              "id": "5df9a3c3-bca5-4ae5-9d07-5814f6e7abb1",
+              "name": "motivo",
+              "value": "REVISIOM_MONTO",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        192
+      ],
+      "id": "2fe390fb-cfc2-480e-8f55-9859410c051f",
+      "name": "Edit Fields4",
+      "notesInFlow": true,
+      "notes": "Revisión monto"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6704ebbc-5a21-4e35-8fc8-0c43a8cc781f",
+              "name": "ruta",
+              "value": "REVISION",
+              "type": "string"
+            },
+            {
+              "id": "c34a4805-8264-4ff7-a675-eede52ceb753",
+              "name": "motivo",
+              "value": "REVISION_FALLA",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        352
+      ],
+      "id": "74bd24b2-ac30-4c99-8b3e-80cc383ebb62",
+      "name": "Edit Fields5",
+      "notesInFlow": true,
+      "notes": "Revisión estado"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f325ac52-2e40-4036-a093-c3d6cb674e4e",
+              "name": "ruta",
+              "value": "APROBACION",
+              "type": "string"
+            },
+            {
+              "id": "8f9a10b1-7168-4690-88ca-3a5a6504cfdb",
+              "name": "motivo",
+              "value": "APROBACION",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        512
+      ],
+      "id": "0d0c79bb-fa43-4b99-a9e7-d2b71b083c47",
+      "name": "Edit Fields6",
+      "notesInFlow": true,
+      "notes": "Aprobación"
+    },
+    {
+      "parameters": {
+        "url": "https://mindicador.cl/api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        0,
+        32
+      ],
+      "id": "2a419892-9911-4785-8de9-4c4e295937af",
+      "name": "HTTP Request",
+      "alwaysOutputData": true,
+      "notesInFlow": true,
+      "notes": "Valor UF"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.email_cliente }}",
+        "subject": "=NOTIFICACIÓN ESTADO",
+        "emailType": "text",
+        "message": "=Hola! Tu solicitud con id: {{ $('Webhook').item.json.body.id_solicitud }} está en estado: {{ $json.ruta }} con motivo: {{ $json.motivo }}. Gracias por tu espera.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        64
+      ],
+      "id": "75093248-6822-45eb-9f26-4acb7fd2cd2d",
+      "name": "Send a message",
+      "webhookId": "51599c93-e426-477c-a9a5-5868f27332ed",
+      "notesInFlow": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "D6MU6bKzppoyAvqW",
+          "name": "Gmail account"
+        }
+      },
+      "notes": "Notificación a cliente"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1egd0pqYd6CIJzqKlLGvrIUNyiCiaGC9AIz_-k-QFn1Q",
+          "mode": "list",
+          "cachedResultName": "Registro solicitudes n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1egd0pqYd6CIJzqKlLGvrIUNyiCiaGC9AIz_-k-QFn1Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1egd0pqYd6CIJzqKlLGvrIUNyiCiaGC9AIz_-k-QFn1Q/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_solicitud": "={{ $('Webhook').item.json.body.id_solicitud }}",
+            "sku": "={{ $('Webhook').item.json.body.sku }}",
+            "monto_clp": "={{ $('Webhook').item.json.body.monto }}",
+            "monto_uf": "={{ $('Webhook').item.json.body.monto.toNumber() / $('HTTP Request').item.json.uf.valor }}",
+            "ruta": "={{ $json.ruta }}",
+            "D": "14",
+            "U": "610000",
+            "motivo": "={{ $json.motivo }}",
+            "dias_desde_compra": "={{ $('Webhook').item.json.body.dias_desde_compra }}",
+            "estado_producto": "={{ $('Webhook').item.json.body.estado_producto }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id_solicitud",
+              "displayName": "id_solicitud",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sku",
+              "displayName": "sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "monto_clp",
+              "displayName": "monto_clp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "monto_uf",
+              "displayName": "monto_uf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "estado_producto",
+              "displayName": "estado_producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "dias_desde_compra",
+              "displayName": "dias_desde_compra",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ruta",
+              "displayName": "ruta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "motivo",
+              "displayName": "motivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "U",
+              "displayName": "U",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "D",
+              "displayName": "D",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        64
+      ],
+      "id": "1cc003f1-d3b1-4467-a3a5-fe2f72d7dba8",
+      "name": "Append row in sheet",
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CJySMazQgDtXOrrY",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "Registro de casos"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n\"id_orden\": \"{{ $('Webhook').item.json.body.id_solicitud }}\",\n\"ruta\": \"{{ $('Append row in sheet').item.json.ruta }}\",\n\"motivo\": \"{{ $('Append row in sheet').item.json.motivo }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1264,
+        64
+      ],
+      "id": "a2a688e4-2e75-47c5-86e3-1a1db12cdb51",
+      "name": "Respond to Webhook",
+      "notesInFlow": true,
+      "notes": "Responder"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1c02f87f-806e-455d-9acf-f0dfc4d1a83c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1ebd01d71c3a2edd73556eaafc72a22df6124a129966fda575f5566971cd3866"
+  },
+  "nodeGroups": [],
+  "id": "hCo5wy3OTRd9TnkW",
+  "tags": []
+}

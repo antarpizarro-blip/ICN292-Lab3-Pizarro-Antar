@@ -1,0 +1,184 @@
+{
+  "name": "My workflow copy",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -224,
+        -32
+      ],
+      "id": "6e9b384f-37bf-47bf-8b55-08f3a6dfc7ad",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1egd0pqYd6CIJzqKlLGvrIUNyiCiaGC9AIz_-k-QFn1Q",
+          "mode": "list",
+          "cachedResultName": "Registro solicitudes n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1egd0pqYd6CIJzqKlLGvrIUNyiCiaGC9AIz_-k-QFn1Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1egd0pqYd6CIJzqKlLGvrIUNyiCiaGC9AIz_-k-QFn1Q/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        -32
+      ],
+      "id": "4bc6fef9-3c0d-43d9-9d9d-5eac0c1b0443",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CJySMazQgDtXOrrY",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "field": "ruta"
+            },
+            {
+              "aggregation": "sum",
+              "field": "monto_clp"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "ruta",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        -32
+      ],
+      "id": "814f49e1-6df7-414e-9449-09a2d9df154a",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "sendTo": "antar.pizarro@sansano.usm.cl",
+        "subject": "Sumario solicitudes diarias",
+        "message": "={{ $json.mensaje_completo }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        -32
+      ],
+      "id": "7ab806ea-35f1-4f9a-9ded-c25bd38be8a2",
+      "name": "Send a message",
+      "webhookId": "9ca46649-cdf8-4ce7-9b80-61a4536b4a94",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "D6MU6bKzppoyAvqW",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst grupos = $input.all();\n\nlet monto_total = 0;\nlet cantidad_total = 0;\nlet aprobadas = 0;\nlet desglose = \"\";\n\nfor (const grupo of grupos) {\n\n  const nombre_ruta = grupo.json.ruta || \"Sin Ruta\";\n  const cantidad = grupo.json.count_ruta || grupo.json.count || 0;\n  const monto_ruta = grupo.json.sum_monto_clp || grupo.json.monto || 0;\n  monto_total += monto_ruta;\n  cantidad_total += cantidad;\n\n  if (nombre_ruta.includes(\"APROBACION\")) {\n    aprobadas += cantidad;\n  }\n  desglose += `• ${nombre_ruta}: ${cantidad} solicitudes | Monto: $${monto_ruta.toLocaleString('es-CL')}\\n`;\n}\n\nconst tasa_aprobacion = cantidad_total > 0 \n  ? ((aprobadas / cantidad_total) * 100).toFixed(1) \n  : 0;\n\nconst mensaje_final = `REPORTE DIARIO DE DEVOLUCIONES\n\n DESGLOSE POR RUTA:\n${desglose}\n\nRESUMEN GENERAL:\n• Total Solicitudes Procesadas: ${cantidad_total}\n• Solicitudes Aprobadas: ${aprobadas}\n• Tasa de Aprobación: ${tasa_aprobacion}%\n• Monto Total Consolidado: $${monto_total.toLocaleString('es-CL')}`;\n\nreturn {\n  json: {\n    monto_total_global: monto_total,\n    total_solicitudes: cantidad_total,\n    solicitudes_aprobadas: aprobadas,\n    tasa_aprobacion: tasa_aprobacion,\n    desglose_texto: desglose,\n    mensaje_completo: mensaje_final\n  }\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        -32
+      ],
+      "id": "657e5549-3712-4f75-959d-f2f0c1371a43",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "8e2fe958-ecc3-4541-94fa-38b717ee7c8f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1ebd01d71c3a2edd73556eaafc72a22df6124a129966fda575f5566971cd3866"
+  },
+  "nodeGroups": [],
+  "id": "0bUzwBAHn2uWb8PL",
+  "tags": []
+}
